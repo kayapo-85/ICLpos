@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa das Igrejas do Rosário</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: linear-gradient(145deg, #f0f2f5 0%, #e6e9f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .homepage-card {
+            max-width: 1280px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 10px 25px rgba(0, 20, 40, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        /* cabeçalho estiloso */
+        .hero-header {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 24px 32px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .hero-header h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1e2b3c, #2c3e50);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .hero-header h1::before {
+            content: "⛪";
+            font-size: 2rem;
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
+            background: none;
+            color: #8b5a2b;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #2c3e50cc;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .chip {
+            background: #2c3e50;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chip::before {
+            content: "📌";
+            font-size: 1rem;
+        }
+        /* área do mapa — destaque total */
+        .map-container {
+            padding: 24px 32px 32px 32px;
+        }
+        .map-wrapper {
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px -8px rgba(0, 20, 30, 0.4);
+            border: 3px solid white;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            position: relative;
+        }
+        .map-wrapper:hover {
+            box-shadow: 0 20px 45px -5px rgba(0, 40, 60, 0.5);
+            transform: scale(1.005);
+        }
+        .google-maps-embed {
+            width: 100%;
+            height: 550px;
+            border: 0;
+            display: block;
+        }
+        /* rodapé com link e metadados */
+        .info-footer {
+            padding: 20px 32px 28px 32px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .url-badge {
+            background: white;
+            border-radius: 60px;
+            padding: 10px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            border: 1px solid #ffffffaa;
+        }
+        .url-text {
+            color: #0b57d0;
+            font-weight: 500;
+            word-break: break-all;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .btn-link {
+            background: #1a73e8;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.15s;
+            border: 1px solid #ffffff40;
+            box-shadow: 0 4px 8px rgba(0,60,130,0.2);
+        }
+        .btn-link:hover {
+            background: #0b57d0;
+            gap: 14px;
+            box-shadow: 0 8px 14px rgba(0,60,130,0.25);
+        }
+        .btn-link:active {
+            transform: scale(0.97);
+        }
+        .attribution {
+            color: #3c4a5b;
+            font-size: 0.9rem;
+        }
+        .attribution a {
+            color: #1a3c5e;
+            text-decoration: none;
+            border-bottom: 1px dotted;
+        }
+        /* responsividade */
+        @media (max-width: 700px) {
+            .hero-header { padding: 20px; }
+            .map-container { padding: 16px 20px 20px; }
+            .info-footer { padding: 18px 20px; flex-direction: column; align-items: stretch; }
+            .google-maps-embed { height: 450px; }
+            .url-badge { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 450px) {
+            .google-maps-embed { height: 380px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="homepage-card">
+        <!-- cabeçalho com título e contexto -->
+        <div class="hero-header">
+            <h1>Igrejas do Rosário com imagens</h1>
+            <div class="subtitle">
+                <span>✨ Coleção cartográfica por Aarão J B Pereira</span>
+                <span class="chip">mapa personalizado</span>
+            </div>
+        </div>
+
+        <!-- área de pré-visualização do mapa -->
+        <div class="map-container">
+            <div class="map-wrapper">
+                <!-- Incorporação direta do Google Maps (My Maps) com o link fornecido, adaptado para embed -->
+                <!-- Nota: mapas do "Google My Maps" podem ser incorporados usando o recurso de compartilhar → incorporar. O link fornecido é de edição, mas para visualização pública usamos o embed correspondente. Caso prefira o link exato de edição, ele estará no rodapé. -->
+                <iframe 
+                    class="google-maps-embed"
+                    src="https://www.google.com/maps/d/embed?mid=1aEL8YBtIK-taRNJgMiqgoMyvwM6XzME&ehbc=2E312F" 
+                    allowfullscreen 
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Mapa das Igrejas do Rosário - Google My Maps">
+                </iframe>
+            </div>
+            <!-- pequena legenda contextual -->
+            <p style="margin-top: 14px; font-size: 0.9rem; color: #2e3b4ecc; display: flex; align-items: center; gap: 8px;">
+                <span style="background: #d0ddea; padding: 3px 10px; border-radius: 30px;">🛰️ ~2.000 km de alcance</span>
+                <span>Mapa criado por usuário · Dados ©2026 GS(2011)6020</span>
+            </p>
+        </div>
+
+        <!-- rodapé com o endereço e link direto -->
+        <div class="info-footer">
+            <div class="url-badge">
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <span style="background: #eef2f6; padding: 5px 10px; border-radius: 30px;">🔗</span>
+                    <span class="url-text" title="Clique para copiar (simulação)">https://www.google.com/maps/d/edit?mid=1aEL8YBtIK-taRNJgMiqgoMyvwM6XzME&usp=sharing</span>
+                </span>
+                <!-- simulacro de botão copiar (apenas visual) -->
+                <span style="color: #4a5b6b; font-size: 0.8rem; border-left: 1px solid #cddae6; padding-left: 12px;">pré‑visualização ativa</span>
+            </div>
+            <a href="https://www.google.com/maps/d/edit?mid=1aEL8YBtIK-taRNJgMiqgoMyvwM6XzME&usp=sharing" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="btn-link">
+                <span>📂</span> Abrir mapa para editar / ver no My Maps
+            </a>
+        </div>
+
+        <!-- linha extra com informações do Google Maps e gerenciamento (estilo inspirado na interface do link) -->
+        <div style="padding: 0px 32px 24px 32px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #3c4f64; border-top: 1px solid #eef2f8; margin-top: 8px;">
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <span style="display: flex; align-items: center; gap: 6px;">⚙️ <a href="#" style="text-decoration: none; color: #1a3c5e;">Gerenciar conta</a></span>
+                <span style="display: flex; align-items: center; gap: 6px;">🗺️ <a href="#" style="text-decoration: none; color: #1a3c5e;">Criar novo mapa</a></span>
+                <span style="display: flex; align-items: center; gap: 6px;">📁 <a href="#" style="text-decoration: none; color: #1a3c5e;">Compartilhados com você</a></span>
+            </div>
+            <div style="display: flex; gap: 16px;">
+                <span>📱 Google Drive</span>
+                <span>📧 Ajuda</span>
+                <span>🚩 Reportar</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
